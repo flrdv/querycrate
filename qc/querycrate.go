@@ -5,7 +5,12 @@ import (
 	"fmt"
 )
 
+const maxRecursionDepth = 15
+
 type QueryCrate interface {
+	GetOr(name string, otherwise interface{}) interface{}
+	Get(name string) (string, error)
+	AddQuery(path string) error
 }
 
 type queryCrate struct {
@@ -13,10 +18,15 @@ type queryCrate struct {
 }
 
 func NewQueryCrate(rootPath string, filters ...Filter) (QueryCrate, error) {
-	filesTree, err := buildFilesTree(rootPath)
+	filesTree, err := buildFilesTree(rootPath, maxRecursionDepth)
 
 	if err != nil {
 		return nil, err
+	}
+
+	if len(filters) == 0 {
+		// all files with .sql extensions are allowed by default
+		filters = append(filters, AllowExtensions(".sql"))
 	}
 
 	queryFiles := getFilteredFiles(filesTree, filters...)
@@ -32,17 +42,17 @@ func NewQueryCrate(rootPath string, filters ...Filter) (QueryCrate, error) {
 		queries[getQueryPath(file)] = string(fileContent)
 	}
 
-	return queryCrate{
+	return &queryCrate{
 		queries: queries,
 	}, nil
 }
 
-func (q queryCrate) GetOrEmpty(name string) string {
+func (q queryCrate) GetOr(name string, instead interface{}) interface{} {
 	if query, found := q.queries[name]; found {
 		return query
 	}
 
-	return ""
+	return instead
 }
 
 func (q queryCrate) Get(name string) (string, error) {
@@ -51,4 +61,16 @@ func (q queryCrate) Get(name string) (string, error) {
 	}
 
 	return "", errors.New(fmt.Sprintf(`ErrQueryNotFound: query named "%s" not found`, name))
+}
+
+func (q *queryCrate) AddQuery(path string) error {
+	queryName, queryValue, err := getFile(path)
+
+	if err != nil {
+		return err
+	}
+
+	q.queries[queryName] = queryValue
+
+	return nil
 }
