@@ -1,0 +1,1 @@
+somerepository/query2
