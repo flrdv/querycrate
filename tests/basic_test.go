@@ -24,55 +24,55 @@ func wantQuery(qc querycrate.QueryCrate, queryName, wantQuery string) error {
 }
 
 func TestQueriesFromRoot(t *testing.T) {
-	qc, err := querycrate.NewQueryCrate("queries")
+	qc := querycrate.NewQueryCrate()
 
-	if err != nil {
-		t.Fatal("unexpected error:", err)
+	if err := qc.FromFolder("queries"); err != nil {
+		t.Fatal("unexpected error during initializing:", err)
 	}
 
 	query1 := "query1"
 	query2 := "query2"
 
-	if err = wantQuery(qc, query1, query1); err != nil {
+	if err := wantQuery(qc, query1, query1); err != nil {
 		t.Fatal(err)
 	}
-	if err = wantQuery(qc, query2, query2); err != nil {
+	if err := wantQuery(qc, query2, query2); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestQueriesFromSomeRepository(t *testing.T) {
-	qc, err := querycrate.NewQueryCrate("queries")
+	qc := querycrate.NewQueryCrate()
 
-	if err != nil {
-		t.Fatal("unexpected error:", err)
+	if err := qc.FromFolder("queries"); err != nil {
+		t.Fatal("unexpected error during initializing:", err)
 	}
 
 	query1 := "somerepository/query1"
 	query2 := "somerepository/query2"
 
-	if err = wantQuery(qc, query1, query1); err != nil {
+	if err := wantQuery(qc, query1, query1); err != nil {
 		t.Fatal(err)
 	}
-	if err = wantQuery(qc, query2, query2); err != nil {
+	if err := wantQuery(qc, query2, query2); err != nil {
 		t.Fatal(err)
 	}
 }
 
 func TestQueriesFromSubRepository(t *testing.T) {
-	qc, err := querycrate.NewQueryCrate("queries")
+	qc := querycrate.NewQueryCrate()
 
-	if err != nil {
-		t.Fatal("unexpected error:", err)
+	if err := qc.FromFolder("queries"); err != nil {
+		t.Fatal("unexpected error during initializing:", err)
 	}
 
 	query1 := "somerepository/subrepository/query1"
 	query2 := "somerepository/subrepository/query2"
 
-	if err = wantQuery(qc, query1, query1); err != nil {
+	if err := wantQuery(qc, query1, query1); err != nil {
 		t.Fatal(err)
 	}
-	if err = wantQuery(qc, query2, query2); err != nil {
+	if err := wantQuery(qc, query2, query2); err != nil {
 		t.Fatal(err)
 	}
 }

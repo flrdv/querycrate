@@ -8,6 +8,7 @@ import (
 const maxRecursionDepth = 15
 
 type QueryCrate interface {
+	FromFolder(root string, filters ...Filter) error
 	GetOr(name string, otherwise interface{}) interface{}
 	Get(name string) (string, error)
 	AddQuery(path string) error
@@ -22,11 +23,20 @@ type queryCrate struct {
 
 	By default, if no filters are specified, only .sql files are allowed
 */
-func NewQueryCrate(rootPath string, filters ...Filter) (QueryCrate, error) {
-	filesTree, err := buildFilesTree(rootPath, maxRecursionDepth)
+func NewQueryCrate() QueryCrate {
+	return &queryCrate{
+		queries: make(map[string]string),
+	}
+}
+
+/*
+	Initializes query crate with query files from root path
+*/
+func (q *queryCrate) FromFolder(root string, filters ...Filter) error {
+	filesTree, err := buildFilesTree(root, maxRecursionDepth)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	if len(filters) == 0 {
@@ -35,21 +45,18 @@ func NewQueryCrate(rootPath string, filters ...Filter) (QueryCrate, error) {
 	}
 
 	queryFiles := getFilteredFiles(filesTree, filters...)
-	queries := make(map[string]string)
 
 	for _, file := range queryFiles {
 		fileContent, err := file.Read()
 
 		if err != nil {
-			return nil, errors.New(fmt.Sprintf(`ErrInvalidQueryFile: failed to read query file: "%s"`, file.Name))
+			return errors.New(fmt.Sprintf(`ErrInvalidQueryFile: failed to read query file: "%s"`, file.Name))
 		}
 
-		queries[getQueryPath(file)] = string(fileContent)
+		q.queries[getQueryPath(file)] = string(fileContent)
 	}
 
-	return &queryCrate{
-		queries: queries,
-	}, nil
+	return nil
 }
 
 /*
