@@ -16,11 +16,18 @@ func makePathUnixLike(path string) string {
 }
 
 func getFilteredFiles(dir Dir, filters ...Filter) (files []File) {
-	for _, filter := range filters {
-		for _, file := range dir.Files {
-			if filter.IsAllowed(file) {
-				files = append(files, file)
+	for _, file := range dir.Files {
+		allowed := true
+
+		for _, filter := range filters {
+			if !filter.IsAllowed(file) {
+				allowed = false
+				break
 			}
+		}
+
+		if allowed {
+			files = append(files, file)
 		}
 	}
 
