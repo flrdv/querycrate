@@ -17,6 +17,11 @@ type queryCrate struct {
 	queries map[string]string
 }
 
+/*
+	Initializes and returns a QueryCrate instance, or error in case of failure while opening some query files
+
+	By default, if no filters are specified, only .sql files are allowed
+*/
 func NewQueryCrate(rootPath string, filters ...Filter) (QueryCrate, error) {
 	filesTree, err := buildFilesTree(rootPath, maxRecursionDepth)
 
@@ -47,6 +52,9 @@ func NewQueryCrate(rootPath string, filters ...Filter) (QueryCrate, error) {
 	}, nil
 }
 
+/*
+	Get query, or return user-defined interface instead
+*/
 func (q queryCrate) GetOr(name string, instead interface{}) interface{} {
 	if query, found := q.queries[name]; found {
 		return query
@@ -55,6 +63,9 @@ func (q queryCrate) GetOr(name string, instead interface{}) interface{} {
 	return instead
 }
 
+/*
+	Get query. May return only ErrQueryNotFound error
+*/
 func (q queryCrate) Get(name string) (string, error) {
 	if query, found := q.queries[name]; found {
 		return query, nil
@@ -63,6 +74,10 @@ func (q queryCrate) Get(name string) (string, error) {
 	return "", errors.New(fmt.Sprintf(`ErrQueryNotFound: query named "%s" not found`, name))
 }
 
+/*
+	Adds a query by a raw path. May return errors in case of path is not a file, or reading a query file
+	failed in some reason
+*/
 func (q *queryCrate) AddQuery(path string) error {
 	queryName, queryValue, err := getFile(path)
 
