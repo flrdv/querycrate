@@ -7,7 +7,7 @@
 ## Docs
 #### Code is placed in qc folder. So import should look like this: `import "github.com/fakefloordiv/querycrate/qc"`.
 
-### Library also has it's own queries locators - this is unix-like path to file, including file name, but excluding file extension. For example, `path/to/my/query.sql` may be gotten from QueryCrate by `path/to/my/query` locator. Also locator does not starts with a root path
+#### Library also has it's own queries locators - this is unix-like path to file, including file name, but excluding file extension. For example, `path/to/my/query.sql` may be gotten from QueryCrate by `path/to/my/query` locator. Also locator does not starts with a root path
 ---
 ### Filters
 Filters are just structs that implement interface `querycrate.Filter` with a single method `IsAllowed(file querycrate.File) bool`. Library already has 2 simple filters - `AllowExtensions(extensions... string)` and `IgnoreExtensions(extensions... string)` (to be honest they're just returning an initialized struct). Filters may stacking, so you can add multiple filters
