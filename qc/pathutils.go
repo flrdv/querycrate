@@ -1,4 +1,4 @@
-package querycrate
+package qc
 
 import (
 	"io/ioutil"

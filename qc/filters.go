@@ -1,4 +1,4 @@
-package querycrate
+package qc
 
 type Filter interface {
 	IsAcceptable(File) bool
