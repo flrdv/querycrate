@@ -23,8 +23,9 @@ import (
 
 func main() {
   root := "somefolder/"
-  qc, err := querycrate.NewQueryCrate(root) // by default only .sql files are allowed
-  // or querycrate.NewQueryCrate(root, SomeFilter1, SomeFilter2, ...)
+  qc := querycrate.NewQueryCrate()
+  err := qc.FromFolder(root) // by default only .sql files are allowed
+  // or querycrate.FromFolder(root, SomeFilter1, SomeFilter2, ...) to add filters
   
   if err != nil {
     log.Fatal("unexpected error:", err)
