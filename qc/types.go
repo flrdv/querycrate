@@ -12,7 +12,7 @@ type File struct {
 }
 
 func (f File) Read() (data []byte, err error) {
-	data, err = os.ReadFile(path.Join(f.RelPath, f.Name))
+	data, err = os.ReadFile(path.Join(f.RelPath, f.Name) + f.Extension)
 
 	return data, err
 }
