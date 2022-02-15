@@ -76,3 +76,17 @@ func TestQueriesFromSubRepository(t *testing.T) {
 		t.Fatal(err)
 	}
 }
+
+func TestAddQuery(t *testing.T) {
+	qc := querycrate.NewQueryCrate()
+
+	if err := qc.AddQuery("queries/query1.sql"); err != nil {
+		t.Fatal("unexpected error while adding queries/query1.sql:", err)
+	}
+
+	err := wantQuery(qc, "queries/query1", "query1")
+
+	if err != nil {
+		t.Fatal("unexpected error while getting query:", err)
+	}
+}
